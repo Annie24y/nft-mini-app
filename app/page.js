@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { contract } from "../lib/contract";
 import { inAppWallet } from "thirdweb/wallets";
-import { claimTo } from "thirdweb/extensions/erc1155";
+import { claim } from "thirdweb/extensions/erc1155";
 
 const wallet = inAppWallet();
 
@@ -18,30 +18,44 @@ export default function Home() {
 
       const account = await wallet.connect();
 
-      await claimTo({
+      await claim({
         contract,
         to: account.address,
         tokenId: 0,
         quantity: 1,
       });
 
-      setStatus("✅ NFT Claimed!");
+      setStatus("✅ NFT Claimed Successfully!");
     } catch (e) {
-      setStatus("❌ Failed or sold out");
+      console.log("ERROR:", e);
+
+      // Better UX error message (shows real reason if available)
+      setStatus(e?.message || "❌ Transaction failed (check claim conditions or supply)");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <main style={{ padding: 40 }}>
-      <h1>Claim Your NFT</h1>
+    <main style={{ padding: 40, fontFamily: "sans-serif" }}>
+      <h1>🎁 Claim Your NFT</h1>
 
-      <button onClick={claimNFT} disabled={loading}>
+      <p>Base Eternal - Early Builder</p>
+
+      <button
+        onClick={claimNFT}
+        disabled={loading}
+        style={{
+          padding: "12px 20px",
+          marginTop: 20,
+          cursor: "pointer",
+          fontSize: 16
+        }}
+      >
         {loading ? "Claiming..." : "Claim NFT"}
       </button>
 
-      <p>{status}</p>
+      <p style={{ marginTop: 20 }}>{status}</p>
     </main>
   );
 }
