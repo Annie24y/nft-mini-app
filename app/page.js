@@ -27,10 +27,15 @@ export default function Home() {
 
       setStatus("✅ NFT Claimed Successfully!");
     } catch (e) {
-      console.log("ERROR:", e);
+      console.log("FULL ERROR:", e);
 
-      // Better UX error message (shows real reason if available)
-      setStatus(e?.message || "❌ Transaction failed (check claim conditions or supply)");
+      setStatus(
+        "❌ ERROR: " +
+        (e?.shortMessage ||
+          e?.reason ||
+          e?.message ||
+          JSON.stringify(e))
+      );
     } finally {
       setLoading(false);
     }
